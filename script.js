@@ -3,16 +3,10 @@ var url = "https://thingspeak.com/channels/120152/field/1.json";
 var Prvni = new Array();
 var Druhy = new Array();
 var Treti = new Array();
+var Ctvrty = new Array();
 
-        var PrvniSum = 0; var DruhySum = 0; var TretiSum = 0;
-        var PrvniPrumer = 0; var DruhyPrumer = 0; var TretiPrumer = 0;
-//cas 2016-05-28T15:11:36+02:00
-// prvnich 10 znaku je datum
-// 20\d{2}(-|\/)((0[1-9])|(1[0-2]))(-|\/)((0[1-9])|([1-2][0-9])|(3[0-1]))(T|\s)(([0-1][0-9])|(2[0-3])):([0-5][0-9]):([0-5][0-9])
-//function escapeRegExp(string){
-//  return string.replace(20\d{2}(-|\/)((0[1-9])|(1[0-2]))(-|\/)((0[1-9])|([1-2][0-9])|(3[0-1]))(T|\s)(([0-1][0-9])|(2[0-3])):([0-5][0-9]):([0-5][0-9]), "\\$&"); // $& means the whole matched string
-//}
-
+var PrvniSum = 0; var DruhySum = 0; var TretiSum = 0; var CtvrtySum = 0;
+var PrvniPrumer = 0; var DruhyPrumer = 0; var TretiPrumer = 0; var CtvrtyPrumer = 0;
 
 xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -32,10 +26,13 @@ xmlhttp.onreadystatechange = function() {
                 var endOfSecondClass = new Date("2016-05-29T11:00:00+02:00");
                 var startOfThirdClass = new Date("2016-05-29T11:00:01+02:00");
                 var endOfThirdClass = new Date("2016-05-29T12:00:00+02:00");
+                var startOfFourthClass = new Date("2016-05-29T12:00:01+02:00");
+                var endOfFourthClass = new Date("2016-05-29T18:00:00+02:00");
 
                 if ((newDate < endOfFirstClass) && (newDate > startOfFirstClass)) {Prvni.push(parseInt(response.feeds[i].field1));} else
                 if ((newDate < endOfSecondClass) && (newDate > startOfSecondClass)) {Druhy.push(parseInt(response.feeds[i].field1));} else 
                 if ((newDate < endOfThirdClass) && (newDate > startOfThirdClass)) {Treti.push(parseInt(response.feeds[i].field1))}
+                if ((newDate < endOfFourthClass) && (newDate > startOfFourthClass)) {Ctvrty.push(parseInt(response.feeds[i].field1))}
             }
         }
         for( var i = 0; i < Prvni.length; i++ ){PrvniSum += parseInt( Prvni[i], 10 );}
@@ -44,11 +41,14 @@ xmlhttp.onreadystatechange = function() {
              DruhyPrumer = DruhySum/Druhy.length;
         for( var i = 0; i < Treti.length; i++ ){TretiSum += parseInt( Treti[i], 10 );}
              TretiPrumer = TretiSum/Treti.length;
+         for( var i = 0; i < Ctvrty.length; i++ ){CtvrtySum += parseInt( Ctvrty[i], 10 );}
+             CtvrtyPrumer = CtvrtySum/Ctvrty.length;
+        
         html += "<p> Celkový počet hodnotících/průměrné hodnocení předmětu </p>"
         html += "<p> Předmět 1: " + Prvni.length + "/" + PrvniPrumer + " </p>";
         html += "<p> Předmět 2: " + Druhy.length + "/" + DruhyPrumer + " </p>";
         html += "<p> Předmět 3: " + Treti.length + "/" + TretiPrumer + " </p>";
-
+        html += "<p> Předmět 4: " + Ctvrty.length + "/" + CtvrtyPrumer + " </p>";
 
         document.getElementById("wrapper").innerHTML = html;
        
@@ -60,7 +60,8 @@ var chart = c3.generate({
         columns: [
             ['Predmet 1', PrvniPrumer],
             ['Predmet 2', DruhyPrumer],
-            ['Predmet 3', TretiPrumer]
+            ['Predmet 3', TretiPrumer],
+            ['Predmet 4', CtvrtyPrumer]
         ],
         type: 'bar'
     }
